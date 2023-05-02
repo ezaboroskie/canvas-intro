@@ -24,6 +24,23 @@ document.body.style.margin = 0
 // last known position 
 var pos = { x: 0, y: 0 };
 
+// Prevent scrolling when touching the canvas
+document.body.addEventListener("touchstart", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+document.body.addEventListener("touchend", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+document.body.addEventListener("touchmove", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+
 function released(e) {
     buttonDown = false;
   }
