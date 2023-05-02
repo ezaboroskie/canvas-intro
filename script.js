@@ -1,30 +1,19 @@
-var canvas = document.getElementById('main-canvas')
+var canvas = document.getElementById('canvas')
 
 //sets canvas context to 2d
-var ctx = canvas.getContext("2d");
+var context = canvas.getContext("2d");
 
-//resizes canvas to fit view window
 function resize(){
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    context.canvas.width = window.innerWidth;
+    context.canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resize);
 resize()
 
-document.addEventListener("mousemove", draw);
-document.addEventListener("mousedown", setPosition);
-document.addEventListener("mouseenter", setPosition);
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mouseup", endDraw);
+canvas.addEventListener("mousemove", draw);
 
-canvas.addEventListener('touchstart', setPosition);
-canvas.addEventListener('touchmove', draw);
-canvas.addEventListener('touchend', released);
-
-document.body.style.margin = 0
-
-// last known position 
-var pos = { x: 0, y: 0 };
-
-// Prevent scrolling when touching the canvas
 document.body.addEventListener("touchstart", function (e) {
     if (e.target == canvas) {
       e.preventDefault();
@@ -41,40 +30,55 @@ document.body.addEventListener("touchmove", function (e) {
     }
   }, false);
 
-function released(e) {
-    buttonDown = false;
-  }
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect(),
+        scaleX = canvas.width / rect.width,
+        scaleY = canvas.height / rect.height;
 
-// sets draw position to be where the client clicks
-function setPosition(e){
+    return {
+        x: (evt.clientX - rect.left) * scaleX,
+        y: (evt.clientY - rect.top) * scaleY
+    }
+}
+
+let drawing=false
+
+function startDraw(e) {
+    let { x, y } = getMousePos(canvas, e)
+    drawing = true;
     if (e.type == "touchstart" || e.type == "mousedown"){
         buttonDown = true
     }
     if (e.type == "touchstart" || e.type == "touchmove") {
-        pos.x = e.touches[0].clientX;
-        pos.y = e.touches[0].clientY;
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
     }else{
-        pos.x = e.clientX;
-        pos.y = e.clientY;
+        x = e.clientX;
+        y = e.clientY;
     }
 }
 
-// if mouse is not clicked, do not go further
-function draw(e) {
-    if (e.buttons !== 1) return; 
-
-    var color = 'black';
-    ctx.beginPath(); // begin the drawing path
-    
-    // line properties
-    ctx.lineWidth = 15; // width of line
-    ctx.lineCap = "round"; // rounded end cap
-    ctx.strokeStyle = color; // hex color of line
-
-    // tracks the user's 
-    ctx.moveTo(pos.x, pos.y); // from position
-    setPosition(e);
-    ctx.lineTo(pos.x, pos.y); // to position
- 
-    ctx.stroke(); // draw it!
+function endDraw(e) {
+    drawing = false;
 }
+
+function draw(e) {
+    if (!drawing) return;
+
+    var color = 'black'
+
+    let { x, y } = getMousePos(canvas, e);
+
+    context.beginPath();
+    context.lineWidth = 15; // width of line
+    context.lineCap = "round"; // rounded end cap
+    context.strokeStyle = color; // hex color of line
+    context.moveTo(x, y);
+    startDraw(e)
+    context.lineTo(x, y);
+    context.stroke();
+   
+}
+
+
+
