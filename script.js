@@ -15,13 +15,29 @@ document.addEventListener("mousemove", draw);
 document.addEventListener("mousedown", setPosition);
 document.addEventListener("mouseenter", setPosition);
 
+document.addEventListener('touchstart', setPosition);
+document.addEventListener('touchmove', draw);
+document.addEventListener('touchend', released);
+
 // last known position 
 var pos = { x: 0, y: 0 };
 
+function released(e) {
+    buttonDown = false;
+  }
+
 // sets draw position to be where the client clicks
 function setPosition(e){
-    pos.x = e.clientX;
-    pos.y = e.clientY;
+    if (e.type == "touchstart" || e.type == "mousedown"){
+        buttonDown = true
+    }
+    if (e.type == "touchstart" || e.type == "touchmove") {
+        pos.x = e.touches[0].clientX;
+        pos.y = e.touches[0].clientY;
+    }else{
+        pos.x = e.clientX;
+        pos.y = e.clientY;
+    }
 }
 
 // if mouse is not clicked, do not go further
