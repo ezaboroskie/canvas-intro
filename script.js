@@ -15,9 +15,9 @@ document.addEventListener("mousemove", draw);
 document.addEventListener("mousedown", setPosition);
 document.addEventListener("mouseenter", setPosition);
 
-document.addEventListener('ontouchstart', setPosition);
-document.addEventListener('ontouchmove', draw);
-document.addEventListener('ontouchend', released);
+canvas.addEventListener('touchstart', setPosition);
+canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchend', released);
 
 document.body.style.margin = 0
 
